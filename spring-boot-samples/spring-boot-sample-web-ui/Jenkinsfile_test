@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '15'))
+        timeout(time: 1, unit: 'HOURS')
+    }
+    environment {
+        AWS_DEFAULT_REGION = 'eu-central-1'
+        DOCKER_TAG = '1.0'
+        ECR_REPOSITORY = '049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot'
+    }
+    stages {
+        stage ('Compile Stage') {
+            steps {
+                git ([
+                    branch: 'origin/2.1.x', 
+                    credentialsId: '42f265ad-fdd7-451c-a7b1-b95fce51f8f4', 
+                    url: 'https://github.com/radnaniy/spring-boot.git'
+                ])
+                sh label: '', script: './mvnw -f spring-boot-samples/spring-boot-sample-web-ui/pom.xml clean package'
+                // sh label: '', script: 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'        
+                // sh label: '', script: 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${DOCKER_TAG} .'
+                // sh label: '', script: 'docker push ${ECR_REPOSITORY}:${DOCKER_TAG}'  
+            }
+        }
+        stage ('Archive') {
+            steps {
+                archiveArtifacts 'spring-boot-samples/spring-boot-sample-web-ui/target/*.jar'
+            }
+        }
+    }
+}

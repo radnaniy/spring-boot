@@ -1,0 +1,27 @@
+pipeline {
+    agent any  
+    environment {
+        AWS_DEFAULT_REGION = 'eu-central-1'
+        DOCKER_TAG = '1.0'
+        ECR_REPOSITORY = '049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot'
+    }
+    stages {
+        stage ('Build') {
+            steps {
+                git ([
+                    branch: '2.1.x', 
+                    credentialsId: '42f265ad-fdd7-451c-a7b1-b95fce51f8f4', 
+                    url: 'https://github.com/radnaniy/spring-boot.git'
+                ])
+                sh 'nice ./mvnw -f spring-boot-samples/spring-boot-sample-web-ui/pom.xml clean package -DskipTest'
+            }
+        }
+        stage ('Docker') {
+            steps {
+                sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'
+                sh 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${DOCKER_TAG} .'                   
+                sh 'docker push ${ECR_REPOSITORY}:${DOCKER_TAG}'
+            }        
+        }
+    }    
+}
