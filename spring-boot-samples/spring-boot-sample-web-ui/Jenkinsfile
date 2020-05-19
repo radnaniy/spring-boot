@@ -8,11 +8,11 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                git ([
-                    branch: '2.1.x', 
-                    credentialsId: '42f265ad-fdd7-451c-a7b1-b95fce51f8f4', 
-                    url: 'https://github.com/radnaniy/spring-boot.git'
-                ])
+                // git ([
+                //     branch: '2.1.x', 
+                //     credentialsId: '42f265ad-fdd7-451c-a7b1-b95fce51f8f4', 
+                //     url: 'https://github.com/radnaniy/spring-boot.git'
+                // ])
                 sh './mvnw -f spring-boot-samples/spring-boot-sample-web-ui/pom.xml clean package -DskipTests'
             }
         }
