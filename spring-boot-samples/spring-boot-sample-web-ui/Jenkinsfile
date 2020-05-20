@@ -19,15 +19,16 @@ pipeline {
         stage ('Docker') {
             steps {
                 sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'
-                sh 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${DOCKER_TAG} .'                   
-                sh 'docker push ${ECR_REPOSITORY}:${DOCKER_TAG}'
+                sh 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${BUILD_NUMBER} .'                   
+                //sh 'docker push ${ECR_REPOSITORY}:${DOCKER_TAG}'
+                sh 'docker push ${ECR_REPOSITORY}:${BUILD_NUMBER}'
                 echo "${BUILD_NUMBER}"
             }        
         }
         stage ('Deploy') {
             steps {
-                // sh 'ssh ubuntu@172.31.41.201 "docker run --rm -d -p 8080:8080 049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot:1.0"'
-                sh 'ssh ubuntu@172.31.41.201 \'whoami\'' 
+                sh 'ssh ubuntu@172.31.41.201 \'docker run --rm -d -p 8080:8080 049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot:1.0\''
+                // sh 'ssh ubuntu@172.31.41.201 \'whoami\'' 
             } 
         }
     }    
