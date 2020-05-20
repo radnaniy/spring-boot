@@ -2,7 +2,6 @@ pipeline {
     agent any  
     environment {
         AWS_DEFAULT_REGION = 'eu-central-1'
-        DOCKER_TAG = '1.0'
         ECR_REPOSITORY = '049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot'
     }
     stages {
@@ -28,7 +27,6 @@ pipeline {
         stage ('Deploy') {
             steps {
                 sh 'ssh ubuntu@172.31.41.201 \'docker run --rm -d -p 8080:8080 049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot:1.0\''
-                // sh 'ssh ubuntu@172.31.41.201 \'whoami\'' 
             } 
         }
     }    
