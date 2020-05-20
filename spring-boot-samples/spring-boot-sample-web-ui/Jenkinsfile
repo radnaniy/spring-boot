@@ -7,24 +7,18 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                // git ([
-                //     branch: '2.1.x', 
-                //     credentialsId: '42f265ad-fdd7-451c-a7b1-b95fce51f8f4', 
-                //     url: 'https://github.com/radnaniy/spring-boot.git'
-                // ])
                 sh 'nice ./mvnw -f spring-boot-samples/spring-boot-sample-web-ui/pom.xml clean package -DskipTests'
             }
         }
-        stage ('Docker') {
+        stage ('Docker push') {
             steps {
                 sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'
                 sh 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${BUILD_NUMBER} .'                   
-                //sh 'docker push ${ECR_REPOSITORY}:${DOCKER_TAG}'
                 sh 'docker push ${ECR_REPOSITORY}:${BUILD_NUMBER}'
                 echo "${BUILD_NUMBER}"
             }        
         }
-        stage ('Deploy') {
+        stage ('Deploy from ECR to web-srv') {
             steps {
                 sh 'ssh ubuntu@172.31.41.201 \'docker run --rm -d -p 8080:8080 049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot:1.0\''
             } 
