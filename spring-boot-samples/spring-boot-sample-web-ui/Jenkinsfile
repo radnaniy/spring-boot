@@ -20,7 +20,7 @@ pipeline {
         }
         stage ('Deploy from ECR to web-srv') {
             steps {
-                sh 'ssh ubuntu@172.31.41.201 \'docker run --rm -d -p 8080:8080 049013287065.dkr.ecr.eu-central-1.amazonaws.com/springboot:1.0\''
+                sh 'ssh ubuntu@172.31.41.201 \'docker run --rm -d -p 8080:8080 ${ECR_REPOSITORY}:${BUILD_NUMBER}\''
             } 
         }
     }    
