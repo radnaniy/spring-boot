@@ -15,7 +15,7 @@ pipeline {
                 sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'
                 sh 'docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t ${ECR_REPOSITORY}:${BUILD_NUMBER} .'                   
                 sh 'docker push ${ECR_REPOSITORY}:${BUILD_NUMBER}'
-                echo "${BUILD_NUMBER}"
+                echo "This is BUILD_NUMBER" "${BUILD_NUMBER}"
                 echo "${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
                 echo "${GIT_PREVIOUS_COMMIT}"
             }        
