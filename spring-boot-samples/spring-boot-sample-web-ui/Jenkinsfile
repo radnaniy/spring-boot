@@ -20,7 +20,7 @@ pipeline {
                 echo "${GIT_PREVIOUS_COMMIT}"
             }        
         }
-        stage ('Deploy from ECR to web-srv') {
+        stage ('Deploy from AWS ECR to web-srv') {
             steps {
                 sh "ssh ubuntu@172.31.41.201 'eval \$(AWS_DEFAULT_REGION=eu-central-1 aws ecr get-login --no-include-email)'"
                 sh "ssh ubuntu@172.31.41.201 'docker run --rm -d -p 8080:8080 ${ECR_REPOSITORY}:${BUILD_NUMBER}'"                
