@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Oleksandr Radnianyi
+  description: Role for deploy container with artefact from AWS ECR
+  

@@ -1,0 +1,6 @@
+[servers]
+dev-env ansible_host=172.31.41.201
+
+[servers:vars]
+deploy_container_name='spring-boot-sample-web-ui'
+deploy_published_ports='8080:8080'

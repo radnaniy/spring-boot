@@ -1,0 +1,43 @@
+---
+# tasks file for deploy-container
+- name: Install AWS CLI & docker-py
+  pip: 
+    name: 
+      - awscli
+      - docker-py 
+    state: latest
+  become: yes
+  tags: 
+    - deploy-container
+    - deploy-container-install-aws-cli
+
+- name: Get AWS ECR credentials
+  command: 'aws ecr get-login-password --region {{ deploy_ecr_region }}'
+  register: deploy_ecr_credentials
+  tags: 
+    - deploy-container
+    - deploy-container-get-credentials
+
+- name: Docker login
+  docker_login: 
+    registry: '{{ deploy_ecr_url }}'
+    username: '{{ deploy_docker_user_name }}'
+    password: '{{ deploy_ecr_credentials.stdout }}'
+  become: yes
+  tags: 
+    - deploy-container
+    - deploy-container-docker-login
+
+- name: Run container from AWS ECR
+  docker_container:
+    name: '{{ deploy_container_name }}'
+    image: '{{ deploy_ecr_url }}:{{ deploy_image_tag }}'
+    published_ports: 
+      - '{{ deploy_published_ports }}'
+    detach: yes
+    pull: yes
+    restart_policy: unless-stopped
+  become: yes
+  tags: 
+    - deploy-container
+    - deploy-container-run-container

@@ -1,0 +1,58 @@
+---
+# tasks file for docker-install
+- name: Install aptitude using apt
+  apt: 
+    name: aptitude 
+    state: latest 
+    update_cache: yes 
+    force_apt_get: yes
+  become: yes
+  tags:
+    - docker-install
+    - docker-install-aptitude
+
+  
+- name: Install required system packages
+  apt: 
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: yes
+  become: yes
+  tags:
+    - docker-install
+    - docker-install-sys-packages
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  become: yes
+  tags:
+    - docker-install
+    - docker-install-aptkey
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  become: yes  
+  tags:
+    - docker-install
+    - docker-install-add-repo
+
+- name: Install docker engine
+  apt: 
+    name: docker-ce 
+    state: latest
+    update_cache: yes 
+  become: yes
+  tags:
+    - docker-install
+    - docker-install-engine

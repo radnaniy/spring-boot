@@ -1,0 +1,7 @@
+---
+# defaults file for depoly-container
+deploy_ecr_region: ''
+deploy_ecr_account_id: ''
+deploy_ecr_url: ''
+deploy_published_ports: ''
+deploy_docker_user_name: 'AWS'

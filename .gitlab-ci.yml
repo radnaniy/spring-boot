@@ -1,0 +1,41 @@
+.tags:
+  tags:
+    - docker
+    - linux
+    # - temporary
+
+stages:
+  - build
+  - docker
+
+maven:
+  image: openjdk:16-jdk
+  stage: build
+  script:
+    - ./mvnw -f spring-boot-samples/spring-boot-sample-web-ui/pom.xml clean package install -DskipTests
+  extends:
+    - .tags
+  artifacts:
+    paths:
+      - ./spring-boot-samples/spring-boot-sample-web-ui/target/spring-boot-sample-web-ui-2.1.14.BUILD-SNAPSHOT.jar
+  only:
+    - merge_requests
+
+docker:
+  image: docker:latest
+  stage: docker
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f spring-boot-samples/spring-boot-sample-web-ui/Dockerfile -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA  -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE
+  extends:
+    - .tags
+  dependencies:
+    - maven
+  only:
+    - 2.1.x
+
+docker-cleanup:
+  stage: .post
+  script:
+    - docker system prune -a -f --filter "until=240h"   

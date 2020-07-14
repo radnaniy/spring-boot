@@ -1,2 +1,0 @@
-[servers]
-web_srv ansible_host=172.31.41.201
