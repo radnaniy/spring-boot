@@ -1,5 +1,5 @@
 ---
-# defaults file for depoly-container role
+# defaults file for depoly-container role.
 deploy_ecr_region: ''
 deploy_ecr_account_id: ''
 deploy_ecr_url: ''
